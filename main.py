@@ -1,7 +1,9 @@
 # login@gmail.com:password:91.92.111.131:28290
 # https://metanit.com/python/tutorial/2.8.php
+
 # {'code': 1004, 'info': 'user info error'}
 # {"code":200,"info":"","data":{"token":"eb03d6da78df517029dee715c726590548d3d7034f2f1827f8cffd5a3e72646cd07d00","user_id":13663488}}
+
 # {"code":200,"info":"","data":{"token":""}}
 
 import asyncio

